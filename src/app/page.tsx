@@ -15,6 +15,9 @@ import PhotoWall from "../components/PhotoWall";
 import TheEverything from "../components/TheEverything";
 import ScrollMarquee from "../components/ScrollMarquee";
 import FinalExperience from "../components/FinalExperience";
+import Scroll3DScene from "../components/Scroll3DScene";
+import FloatingGlassWidgets from "../components/FloatingGlassWidgets";
+import MouseInteractiveConstellation from "../components/MouseInteractiveConstellation";
 
 interface Props {
   children: ReactNode;
@@ -55,12 +58,21 @@ export default function Home() {
         {/* Cinematic Fast Preloader */}
         <PageLoader />
 
+        {/* Unique Interactive Mouse Stardust & Blossom Trail */}
+        {mounted && <MouseInteractiveConstellation />}
+
         {/* Main Experience wrapped in Lenis Smooth Inertia Scroll */}
         <SmoothScroll>
           {/* Floating Minimal Navigation & Sound Controller */}
           <Navigation />
 
+          {/* 3D Rose / Ring Scroll-Driven Motion Component */}
+          {mounted && <Scroll3DScene />}
+
           <main className="relative w-full overflow-hidden bg-[#08080A]">
+            {/* Freely Floating 3D Glass Widgets across sections */}
+            <FloatingGlassWidgets />
+
             {/* Section 01 — Cinematic Hero with Cursor Reveal Mask */}
             <HeroReveal />
 

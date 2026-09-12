@@ -9,6 +9,7 @@ import { useCursor } from "./CustomCursor";
 export default function WhatYouChanged() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const statementsRef = useRef<HTMLDivElement>(null);
+  const imagesRef = useRef<HTMLDivElement>(null);
   const { setCursor, resetCursor } = useCursor();
 
   useEffect(() => {
@@ -17,6 +18,7 @@ export default function WhatYouChanged() {
     const ctx = gsap.context(() => {
       const section = sectionRef.current;
       const statementEls = section?.querySelectorAll(".statement-block");
+      const photoEls = imagesRef.current?.querySelectorAll(".transformation-photo");
       if (!section || !statementEls || statementEls.length === 0) return;
 
       // Pin the section and animate statements sequentially through scroll scrub
@@ -30,6 +32,13 @@ export default function WhatYouChanged() {
           anticipatePin: 1,
         },
       });
+
+      // Initially hide photos
+      if (photoEls) {
+        photoEls.forEach((photo) => {
+          gsap.set(photo, { opacity: 0, scale: 0.9, filter: "blur(10px)" });
+        });
+      }
 
       statementEls.forEach((el, i) => {
         // Initial state
@@ -53,6 +62,42 @@ export default function WhatYouChanged() {
           i * 2
         );
 
+        // Switch corresponding photo
+        if (photoEls) {
+          const photoIndex = Math.min(Math.floor(i / 2), photoEls.length - 1);
+          const currentPhoto = photoEls[photoIndex];
+          if (currentPhoto) {
+            tl.to(
+              currentPhoto,
+              {
+                opacity: 0.85,
+                scale: 1,
+                filter: "blur(0px)",
+                duration: 1,
+                ease: "power2.out",
+              },
+              i * 2
+            );
+
+            // Hide previous photos if advancing
+            photoEls.forEach((otherPhoto, pIdx) => {
+              if (pIdx !== photoIndex) {
+                tl.to(
+                  otherPhoto,
+                  {
+                    opacity: 0,
+                    scale: 0.92,
+                    filter: "blur(8px)",
+                    duration: 0.8,
+                    ease: "power2.in",
+                  },
+                  i * 2
+                );
+              }
+            });
+          }
+        }
+
         // Keep it in view for a moment (except final statement which stays)
         if (i < statementEls.length - 1) {
           tl.to(
@@ -73,6 +118,12 @@ export default function WhatYouChanged() {
     return () => ctx.revert();
   }, []);
 
+  const photos = siteConfig.story.whatYouChanged.images || [
+    { src: "/media/Snapchat-902996947.jpg", tag: "MOMENT // 01", note: "A part of my story" },
+    { src: "/media/Snapchat-324971514.jpg", tag: "MOMENT // 02", note: "Light in the hard days" },
+    { src: "/media/Snapchat-908669016.jpg", tag: "MOMENT // 03", note: "Something beautiful" },
+  ];
+
   return (
     <section
       id="what-you-changed"
@@ -89,10 +140,39 @@ export default function WhatYouChanged() {
         <div className="w-12 h-[1px] bg-bronze/30" />
       </div>
 
+      {/* Synchronized Snapchat Photos in Atmospheric Glass Frame */}
+      <div
+        ref={imagesRef}
+        className="absolute inset-0 pointer-events-none flex items-center justify-center md:justify-end md:pr-24 z-0"
+      >
+        {photos.map((item, pIdx) => (
+          <div
+            key={pIdx}
+            className="transformation-photo absolute w-72 md:w-80 lg:w-96 aspect-[3/4] rounded-2xl p-3 bg-white/[0.03] backdrop-blur-xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden transition-transform duration-700 hover:scale-105"
+            style={{
+              transform: `rotate(${pIdx % 2 === 0 ? -3 : 3}deg)`,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.src}
+              alt={item.note}
+              className="w-full h-[82%] object-cover rounded-xl filter contrast-[1.05] brightness-90"
+            />
+            <div className="h-[18%] flex items-center justify-between px-2 pt-2 text-[10px] font-mono uppercase tracking-widest text-ivory/70">
+              <span className="text-bronze font-semibold">{item.tag}</span>
+              <span>{item.note}</span>
+            </div>
+            {/* Subtle soft ambient glow behind the photo */}
+            <div className="absolute -inset-1 bg-gradient-to-t from-bronze/10 via-transparent to-transparent -z-10 rounded-2xl blur-md" />
+          </div>
+        ))}
+      </div>
+
       {/* Center Container for Stacked Cinematic Statements */}
       <div
         ref={statementsRef}
-        className="relative w-full max-w-5xl h-full flex items-center justify-center text-center"
+        className="relative w-full max-w-5xl h-full flex items-center justify-center text-center z-10"
       >
         {siteConfig.story.whatYouChanged.lines.map((line, idx) => {
           const isClimax = idx === siteConfig.story.whatYouChanged.lines.length - 1;
@@ -101,38 +181,40 @@ export default function WhatYouChanged() {
               key={idx}
               className={`statement-block absolute inset-0 flex flex-col items-center justify-center p-6`}
             >
-              <h2
-                className={`font-serif font-light text-ivory tracking-tight uppercase leading-[1.02] ${
-                  isClimax
-                    ? "display-large text-ivory drop-shadow-2xl"
-                    : "text-3xl md:text-6xl lg:text-7xl text-ivory/90"
-                }`}
-              >
-                {line.split("\n").map((part, pIdx) => (
-                  <span key={pIdx} className="block">
-                    {part}
-                  </span>
-                ))}
-              </h2>
+              <div className="max-w-3xl backdrop-blur-[2px] bg-black/20 p-6 md:p-8 rounded-2xl">
+                <h2
+                  className={`font-serif font-light text-ivory tracking-tight uppercase leading-[1.02] ${
+                    isClimax
+                      ? "display-large text-ivory drop-shadow-2xl"
+                      : "text-3xl md:text-6xl lg:text-7xl text-ivory/90"
+                  }`}
+                >
+                  {line.split("\n").map((part, pIdx) => (
+                    <span key={pIdx} className="block">
+                      {part}
+                    </span>
+                  ))}
+                </h2>
 
-              {isClimax && (
-                <div className="mt-8 flex items-center gap-3">
-                  <span className="w-8 h-[1px] bg-bronze" />
-                  <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-bronze">
-                    MY STORY // FOREVER
-                  </span>
-                  <span className="w-8 h-[1px] bg-bronze" />
-                </div>
-              )}
+                {isClimax && (
+                  <div className="mt-8 flex items-center justify-center gap-3">
+                    <span className="w-8 h-[1px] bg-bronze" />
+                    <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-bronze">
+                      MY STORY // FOREVER
+                    </span>
+                    <span className="w-8 h-[1px] bg-bronze" />
+                  </div>
+                )}
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Progress Dots on Left */}
+      {/* Progress Indicator on Left */}
       <div className="absolute bottom-12 left-6 md:left-16 z-20 flex items-center gap-2">
         <span className="text-[9px] font-mono tracking-widest text-ivory/40 uppercase">
-          READ SLOWLY
+          READ SLOWLY • BESTIE ARCHIVE
         </span>
       </div>
     </section>

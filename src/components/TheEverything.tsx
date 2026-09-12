@@ -57,7 +57,48 @@ export default function TheEverything() {
       onMouseEnter={() => setCursor("text")}
       onMouseLeave={() => resetCursor()}
     >
-      <div className="max-w-5xl flex flex-col items-center">
+      {/* Floating Ambient Snapchat Photos */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Left Floating Photo */}
+        <div
+          className="absolute top-1/4 left-4 md:left-12 lg:left-24 w-44 md:w-56 lg:w-64 aspect-[3/4] rounded-2xl p-2.5 bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-2xl opacity-40 hover:opacity-100 transition-all duration-700 pointer-events-auto hover:scale-105 animate-float-slow hidden md:block"
+          style={{ transform: "rotate(-4deg)" }}
+          data-cursor="image"
+          data-cursor-label="CHERISHED"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/media/Snapchat-324971514.jpg"
+            alt="Essence 1"
+            className="w-full h-[85%] object-cover rounded-xl filter contrast-[1.04]"
+          />
+          <div className="h-[15%] flex items-center justify-between px-1.5 pt-1.5 text-[9px] font-mono tracking-widest text-ivory/60 uppercase">
+            <span className="text-bronze">THAT SMILE</span>
+            <span>08 // A</span>
+          </div>
+        </div>
+
+        {/* Right Floating Photo */}
+        <div
+          className="absolute bottom-1/4 right-4 md:right-12 lg:right-24 w-44 md:w-56 lg:w-64 aspect-[3/4] rounded-2xl p-2.5 bg-white/[0.03] backdrop-blur-md border border-white/10 shadow-2xl opacity-40 hover:opacity-100 transition-all duration-700 pointer-events-auto hover:scale-105 animate-float-slow hidden md:block"
+          style={{ transform: "rotate(4deg)", animationDelay: "-4s" }}
+          data-cursor="image"
+          data-cursor-label="IRREPLACEABLE"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/media/Snapchat-902996947.jpg"
+            alt="Essence 2"
+            className="w-full h-[85%] object-cover rounded-xl filter contrast-[1.04]"
+          />
+          <div className="h-[15%] flex items-center justify-between px-1.5 pt-1.5 text-[9px] font-mono tracking-widest text-ivory/60 uppercase">
+            <span className="text-bronze">THAT ESSENCE</span>
+            <span>08 // B</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-5xl flex flex-col items-center relative z-10">
         {/* Small Text */}
         <p
           ref={preTextRef}

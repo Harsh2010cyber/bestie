@@ -243,6 +243,87 @@ export default function PhotoWall() {
             </div>
           </div>
         </div>
+
+        {/* Photo 7 (Tall, Col 1) */}
+        {siteConfig.story.photoWall.items[6] && (
+          <div className="md:col-span-4 md:mt-8 relative">
+            <div
+              className="wall-photo-card relative aspect-[3/4] bg-dark-surface border border-white/10 rounded-sm overflow-hidden shadow-2xl group transition-all duration-500 hover:z-30 hover:scale-[1.03] hover:border-bronze/40"
+              style={{ transform: "rotate(-1.8deg)" }}
+              data-cursor="image"
+              data-cursor-label="RADIANCE"
+              onMouseEnter={() => setCursor("image", "RADIANCE")}
+              onMouseLeave={() => resetCursor()}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={siteConfig.story.photoWall.items[6].image}
+                alt="Memory 7"
+                className="w-full h-full object-cover object-center filter contrast-[1.03] brightness-95 group-hover:brightness-105 transition-all duration-700"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-dark/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                <span className="font-serif italic text-sm md:text-base text-ivory-muted drop-shadow">
+                  “{siteConfig.story.photoWall.items[6].caption}”
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Photo 8 (Square, Col 2) */}
+        {siteConfig.story.photoWall.items[7] && (
+          <div className="md:col-span-4 md:mt-12 relative">
+            <div
+              className="wall-photo-card relative aspect-square bg-dark-surface border border-white/10 rounded-sm overflow-hidden shadow-2xl group transition-all duration-500 hover:z-30 hover:scale-[1.03] hover:border-bronze/40"
+              style={{ transform: "rotate(2.2deg)" }}
+              data-cursor="image"
+              data-cursor-label="GOLDEN"
+              onMouseEnter={() => setCursor("image", "GOLDEN")}
+              onMouseLeave={() => resetCursor()}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={siteConfig.story.photoWall.items[7].image}
+                alt="Memory 8"
+                className="w-full h-full object-cover object-center filter contrast-[1.03] brightness-95 group-hover:brightness-105 transition-all duration-700"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-dark/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                <span className="font-serif italic text-sm md:text-base text-ivory-muted drop-shadow">
+                  “{siteConfig.story.photoWall.items[7].caption}”
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Photo 9 (Tall, Col 3) */}
+        {siteConfig.story.photoWall.items[8] && (
+          <div className="md:col-span-4 md:mt-6 relative">
+            <div
+              className="wall-photo-card relative aspect-[3/4] bg-dark-surface border border-white/10 rounded-sm overflow-hidden shadow-2xl group transition-all duration-500 hover:z-30 hover:scale-[1.03] hover:border-bronze/40"
+              style={{ transform: "rotate(-1.4deg)" }}
+              data-cursor="image"
+              data-cursor-label="TIMELESS"
+              onMouseEnter={() => setCursor("image", "TIMELESS")}
+              onMouseLeave={() => resetCursor()}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={siteConfig.story.photoWall.items[8].image}
+                alt="Memory 9"
+                className="w-full h-full object-cover object-center filter contrast-[1.03] brightness-95 group-hover:brightness-105 transition-all duration-700"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-dark/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-5">
+                <span className="font-serif italic text-sm md:text-base text-ivory-muted drop-shadow">
+                  “{siteConfig.story.photoWall.items[8].caption}”
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

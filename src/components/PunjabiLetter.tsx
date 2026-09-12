@@ -145,26 +145,74 @@ export default function PunjabiLetter() {
         </p>
       </div>
 
-      {/* Editorial Letter Lines */}
-      <div
-        ref={letterRef}
-        className="max-w-3xl space-y-12 md:space-y-16 pl-4 md:pl-8 border-l border-bronze/20"
-      >
-        {siteConfig.story.punjabiLetter.lines.map((item, idx) => (
-          <div key={idx} className="punjabi-line-item group">
-            <span className="block text-[10px] font-mono tracking-[0.25em] text-bronze/50 mb-2">
-              0{idx + 1}
-            </span>
-            <p className="font-punjabi text-xl md:text-2xl lg:text-3xl text-ivory/90 leading-relaxed group-hover:text-ivory transition-colors">
-              “{item.text}”
-            </p>
-            {showTranslations && (
-              <p className="mt-2 font-serif italic text-sm md:text-base text-ivory-subtle/70 animate-fade-in">
-                {item.translation}
+      {/* Main Content: 2-Column Grid with Poetic Lines & Editorial Photos */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        {/* Editorial Letter Lines (Left) */}
+        <div
+          ref={letterRef}
+          className="lg:col-span-7 space-y-12 md:space-y-16 pl-4 md:pl-8 border-l border-bronze/20"
+        >
+          {siteConfig.story.punjabiLetter.lines.map((item, idx) => (
+            <div key={idx} className="punjabi-line-item group">
+              <span className="block text-[10px] font-mono tracking-[0.25em] text-bronze/50 mb-2">
+                0{idx + 1}
+              </span>
+              <p className="font-punjabi text-xl md:text-2xl lg:text-3xl text-ivory/90 leading-relaxed group-hover:text-ivory transition-colors">
+                “{item.text}”
               </p>
-            )}
+              {showTranslations && (
+                <p className="mt-2 font-serif italic text-sm md:text-base text-ivory-subtle/70 animate-fade-in">
+                  {item.translation}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Editorial Glass Photo Cards (Right) */}
+        <div className="lg:col-span-5 relative flex flex-col items-center lg:items-end gap-8 pt-4">
+          {/* Photo 1: Radiant Portrait */}
+          <div
+            className="relative w-full max-w-sm aspect-[4/5] rounded-2xl p-3 bg-white/[0.04] backdrop-blur-xl border border-white/10 shadow-[0_25px_60px_rgba(0,0,0,0.7)] group hover:scale-[1.02] hover:border-bronze/40 transition-all duration-500"
+            style={{ transform: "rotate(1.8deg)" }}
+            data-cursor="image"
+            data-cursor-label="SOULMATE"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/media/Snapchat-908669016.jpg"
+              alt="Rasmali"
+              className="w-full h-[85%] object-cover rounded-xl filter contrast-[1.04] brightness-95"
+            />
+            <div className="h-[15%] flex items-center justify-between px-2 pt-2 text-[10px] font-mono tracking-widest text-ivory/70 uppercase">
+              <span className="text-bronze font-semibold">ਹੀਰੇ ਵਾਂਗ ਚਮਕ</span>
+              <span>FOREVER // 2024</span>
+            </div>
+            {/* Glass corner highlight */}
+            <div className="absolute top-4 right-4 px-2 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[9px] font-mono tracking-widest text-ivory/80 uppercase">
+              ਸੋਹਣੀ ਯਾਦ
+            </div>
           </div>
-        ))}
+
+          {/* Photo 2: Secondary Floating Candid Polaroid */}
+          <div
+            className="relative w-64 md:w-72 aspect-square rounded-2xl p-2.5 bg-white/[0.03] backdrop-blur-lg border border-white/10 shadow-2xl -mt-12 lg:-mr-4 group hover:scale-105 hover:z-20 transition-all duration-500"
+            style={{ transform: "rotate(-3.5deg)" }}
+            data-cursor="image"
+            data-cursor-label="LAUGHTER"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/media/Snapchat-482331247.jpg"
+              alt="Memory"
+              className="w-full h-[82%] object-cover rounded-xl filter contrast-[1.05]"
+            />
+            <div className="h-[18%] flex items-center justify-between px-2 pt-1.5 text-[9px] font-mono tracking-wider text-ivory/60 uppercase">
+              <span className="text-amber-sunset">ਦਿਲ ਦੀਆਂ ਗੱਲਾਂ</span>
+              <span>PURE BOND</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Grand Climactic Punjabi Statement */}

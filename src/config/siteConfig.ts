@@ -132,12 +132,31 @@ export const siteConfig = {
         "AND SOMEHOW…",
         "YOU TURNED MY LIFE\nINTO SOMETHING\nI CAN CALL BEAUTIFUL.",
       ],
+      images: [
+        {
+          src: "/media/Snapchat-902996947.jpg",
+          tag: "MOMENT // 01",
+          note: "A part of my story",
+        },
+        {
+          src: "/media/Snapchat-324971514.jpg",
+          tag: "MOMENT // 02",
+          note: "Light in the hard days",
+        },
+        {
+          src: "/media/Snapchat-908669016.jpg",
+          tag: "MOMENT // 03",
+          note: "Something beautiful",
+        },
+      ],
     },
 
     punjabiLetter: {
       chapter: "06 / ਦਿਲ ਦੀਆਂ ਗੱਲਾਂ",
       heading: "ਕੁਝ ਗੱਲਾਂ ਦਿਲ ਤੋਂ…",
       subtitle: "Dedicated to the purest bond.",
+      portraitImage: "/media/Snapchat-908669016.jpg",
+      secondaryImage: "/media/Snapchat-482331247.jpg",
       lines: [
         {
           text: "ਤੂੰ ਮੇਰੀ ਜ਼ਿੰਦਗੀ ਦਾ ਉਹ ਹਿੱਸਾ ਐਂ, ਜਿਸਦੇ ਬਿਨਾਂ ਕਹਾਣੀ ਅਧੂਰੀ ਜਿਹੀ ਲੱਗਦੀ ਏ।",
@@ -213,6 +232,27 @@ export const siteConfig = {
           size: "wide",
           rotation: 2,
         },
+        {
+          id: "wall-7",
+          image: "/media/Snapchat-324971514.jpg",
+          caption: "her warmth that lights up the darkest room",
+          size: "tall",
+          rotation: -1.8,
+        },
+        {
+          id: "wall-8",
+          image: "/media/Snapchat-902996947.jpg",
+          caption: "a smile worth more than all the gold",
+          size: "square",
+          rotation: 2.2,
+        },
+        {
+          id: "wall-9",
+          image: "/media/Snapchat-908669016.jpg",
+          caption: "timeless elegance, pure heartbeat",
+          size: "wide",
+          rotation: -1.4,
+        },
       ] as PhotoWallItem[],
     },
 
@@ -221,6 +261,18 @@ export const siteConfig = {
       pre: "THERE ARE PEOPLE\nYOU MEET…",
       main: "…AND THEN THERE ARE\nPEOPLE WHO CHANGE\nTHE WAY YOU SEE LIFE.",
       post: "YOU'RE THAT PERSON.",
+      images: [
+        {
+          src: "/media/Snapchat-324971514.jpg",
+          label: "HER RADIANCE",
+          rotation: -2.5,
+        },
+        {
+          src: "/media/Snapchat-902996947.jpg",
+          label: "HER SMILE",
+          rotation: 2.5,
+        },
+      ],
     },
 
     marquee: [
