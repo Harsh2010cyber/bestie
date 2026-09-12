@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { siteConfig } from "@/config/siteConfig";
+import { siteConfig } from "../config/siteConfig";
 
 export const metadata: Metadata = {
   title: `${siteConfig.bestie.nickname} — A Cinematic Memory Archive`,

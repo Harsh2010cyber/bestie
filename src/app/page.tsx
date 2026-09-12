@@ -1,20 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import PageLoader from "@/components/PageLoader";
-import CustomCursor from "@/components/CustomCursor";
-import SmoothScroll from "@/components/SmoothScroll";
-import Navigation from "@/components/Navigation";
-import HeroReveal from "@/components/HeroReveal";
-import HowItStarted from "@/components/HowItStarted";
-import HorizontalMemoryGallery from "@/components/HorizontalMemoryGallery";
-import VideoMemory from "@/components/VideoMemory";
-import WhatYouChanged from "@/components/WhatYouChanged";
-import PunjabiLetter from "@/components/PunjabiLetter";
-import PhotoWall from "@/components/PhotoWall";
-import TheEverything from "@/components/TheEverything";
-import ScrollMarquee from "@/components/ScrollMarquee";
-import FinalExperience from "@/components/FinalExperience";
+import PageLoader from "../components/PageLoader";
+import CustomCursor from "../components/CustomCursor";
+import SmoothScroll from "../components/SmoothScroll";
+import Navigation from "../components/Navigation";
+import HeroReveal from "../components/HeroReveal";
+import HowItStarted from "../components/HowItStarted";
+import HorizontalMemoryGallery from "../components/HorizontalMemoryGallery";
+import VideoMemory from "../components/VideoMemory";
+import WhatYouChanged from "../components/WhatYouChanged";
+import PunjabiLetter from "../components/PunjabiLetter";
+import PhotoWall from "../components/PhotoWall";
+import TheEverything from "../components/TheEverything";
+import ScrollMarquee from "../components/ScrollMarquee";
+import FinalExperience from "../components/FinalExperience";
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
