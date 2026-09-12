@@ -12,41 +12,49 @@ export default function HorizontalMemoryGallery() {
   const { setCursor, resetCursor } = useCursor();
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    if (typeof window === "undefined") return;
+
+    try {
+      gsap.registerPlugin(ScrollTrigger);
+    } catch (e) {}
 
     const ctx = gsap.context(() => {
       const track = trackRef.current;
       const section = sectionRef.current;
       if (!track || !section) return;
 
-      const getScrollAmount = () => -(track.scrollWidth - window.innerWidth);
+      const getScrollAmount = () => {
+        const dist = track.scrollWidth - window.innerWidth;
+        return dist > 0 ? -dist : 0;
+      };
 
       const tween = gsap.to(track, {
         x: getScrollAmount,
         ease: "none",
+        duration: 1,
       });
 
       ScrollTrigger.create({
         trigger: section,
         start: "top top",
-        end: () => `+=${track.scrollWidth - window.innerWidth + 400}`,
+        end: () => `+=${Math.max(400, track.scrollWidth - window.innerWidth + 300)}`,
         pin: true,
         animation: tween,
         scrub: 1,
         invalidateOnRefresh: true,
       });
 
-      // Subtle parallax on individual memory fragments
+      // Parallax on memory fragment images
       const items = track.querySelectorAll(".memory-fragment");
       items.forEach((item, index) => {
         const img = item.querySelector(".memory-img");
         if (img) {
           gsap.fromTo(
             img,
-            { scale: 0.92, y: index % 2 === 0 ? -15 : 15 },
+            { scale: 0.94, y: index % 2 === 0 ? -10 : 10 },
             {
-              scale: 1.05,
-              y: index % 2 === 0 ? 15 : -15,
+              scale: 1.04,
+              y: index % 2 === 0 ? 10 : -10,
               ease: "none",
               scrollTrigger: {
                 trigger: item,
@@ -120,7 +128,6 @@ export default function HorizontalMemoryGallery() {
           >
             {/* Archival Film Frame Card */}
             <div className="relative w-[280px] sm:w-[340px] md:w-[420px] bg-dark-surface/90 border border-white/10 p-3.5 md:p-4 rounded-sm shadow-2xl backdrop-blur-sm transition-transform duration-500 group-hover:scale-[1.02]">
-              {/* Image Frame with Film Edge */}
               <div className="relative w-full aspect-[3/4] overflow-hidden bg-black rounded-[1px]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img

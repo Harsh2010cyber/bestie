@@ -21,6 +21,7 @@ export default function CustomCursor({ children }: { children?: React.ReactNode 
   const ringRef = useRef<HTMLDivElement>(null);
   const labelRef = useRef<HTMLSpanElement>(null);
 
+  const [mounted, setMounted] = useState(false);
   const [cursorType, setCursorType] = useState<CursorType>("default");
   const [cursorLabel, setCursorLabel] = useState<string>("");
   const [isTouch, setIsTouch] = useState<boolean>(true);
@@ -28,7 +29,8 @@ export default function CustomCursor({ children }: { children?: React.ReactNode 
 
   // Position references for lerp
   const mouse = useRef({ x: -100, y: -100 });
-  const ring = useRef({ x: -100, y: -100, vx: 0, vy: 0 });
+  const ring = useRef({ x: -100, y: -100 });
+  const isVisibleRef = useRef(false);
   const rafId = useRef<number | null>(null);
 
   const setCursor = (type: CursorType, label: string = "") => {
@@ -42,18 +44,28 @@ export default function CustomCursor({ children }: { children?: React.ReactNode 
   };
 
   useEffect(() => {
+    setMounted(true);
+
+    if (typeof window === "undefined") return;
+
     // Check if device supports fine hover pointer
     const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
     const updateTouch = () => setIsTouch(!mediaQuery.matches);
     updateTouch();
-    mediaQuery.addEventListener("change", updateTouch);
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", updateTouch);
+    }
 
     if (!mediaQuery.matches) return;
 
     const onMouseMove = (e: MouseEvent) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
-      if (!isVisible) setIsVisible(true);
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
+        setIsVisible(true);
+      }
 
       // Direct placement of tiny inner dot for 0-latency tracking
       if (dotRef.current) {
@@ -61,19 +73,26 @@ export default function CustomCursor({ children }: { children?: React.ReactNode 
       }
     };
 
-    const onMouseLeave = () => setIsVisible(false);
-    const onMouseEnter = () => setIsVisible(true);
+    const onMouseLeave = () => {
+      isVisibleRef.current = false;
+      setIsVisible(false);
+    };
+
+    const onMouseEnter = () => {
+      isVisibleRef.current = true;
+      setIsVisible(true);
+    };
 
     // Global inspection of hovered elements for data-cursor attributes
     const onMouseOver = (e: MouseEvent) => {
-      const target = (e.target as HTMLElement)?.closest("[data-cursor]") as HTMLElement | null;
+      const target = (e.target as HTMLElement)?.closest?.("[data-cursor]") as HTMLElement | null;
       if (target) {
         const type = (target.getAttribute("data-cursor") as CursorType) || "button";
         const label = target.getAttribute("data-cursor-label") || "";
         setCursorType(type);
         setCursorLabel(label);
       } else {
-        const isClickable = (e.target as HTMLElement)?.closest("a, button, [role='button']");
+        const isClickable = (e.target as HTMLElement)?.closest?.("a, button, [role='button']");
         if (isClickable) {
           setCursorType("button");
           setCursorLabel("");
@@ -84,15 +103,14 @@ export default function CustomCursor({ children }: { children?: React.ReactNode 
       }
     };
 
-    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
     document.addEventListener("mouseleave", onMouseLeave);
     document.addEventListener("mouseenter", onMouseEnter);
-    document.addEventListener("mouseover", onMouseOver);
+    document.addEventListener("mouseover", onMouseOver, { passive: true });
 
     // Lerp loop for fluid outer ring
     const render = () => {
-      // Lerp factor
-      const lerp = 0.14;
+      const lerp = 0.15;
       ring.current.x += (mouse.current.x - ring.current.x) * lerp;
       ring.current.y += (mouse.current.y - ring.current.y) * lerp;
 
@@ -106,21 +124,18 @@ export default function CustomCursor({ children }: { children?: React.ReactNode 
     rafId.current = requestAnimationFrame(render);
 
     return () => {
-      mediaQuery.removeEventListener("change", updateTouch);
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", updateTouch);
+      }
       window.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseleave", onMouseLeave);
       document.removeEventListener("mouseenter", onMouseEnter);
       document.removeEventListener("mouseover", onMouseOver);
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
-  }, [isVisible]);
+  }, []);
 
-  // If mobile or touch device, do not render custom cursor
-  if (isTouch) {
-    return <CursorContext.Provider value={{ setCursor, resetCursor }}>{children}</CursorContext.Provider>;
-  }
-
-  // Ring dimensions and styles based on state
+  // Ring styling based on cursorType
   let ringSize = "w-9 h-9 -ml-[18px] -mt-[18px]";
   let ringStyle = "border border-ivory/35 bg-transparent";
 
@@ -143,32 +158,36 @@ export default function CustomCursor({ children }: { children?: React.ReactNode 
 
   return (
     <CursorContext.Provider value={{ setCursor, resetCursor }}>
-      {/* Outer Interpolated Ring */}
-      <div
-        ref={ringRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[99999] rounded-full transition-[width,height,margin,border-color,background-color,transform] duration-300 ease-out flex items-center justify-center ${ringSize} ${ringStyle} ${
-          isVisible ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ willChange: "transform" }}
-      >
-        {cursorLabel && (
-          <span
-            ref={labelRef}
-            className="text-[9px] font-sans font-semibold uppercase tracking-widest text-ivory drop-shadow-md select-none animate-fade-in"
+      {/* Outer Interpolated Ring (only rendered client-side on non-touch devices) */}
+      {mounted && !isTouch && (
+        <>
+          <div
+            ref={ringRef}
+            className={`fixed top-0 left-0 pointer-events-none z-[99999] rounded-full transition-[width,height,margin,border-color,background-color,transform] duration-300 ease-out flex items-center justify-center ${ringSize} ${ringStyle} ${
+              isVisible ? "opacity-100" : "opacity-0"
+            }`}
+            style={{ willChange: "transform" }}
           >
-            {cursorLabel}
-          </span>
-        )}
-      </div>
+            {cursorLabel && (
+              <span
+                ref={labelRef}
+                className="text-[9px] font-sans font-semibold uppercase tracking-widest text-ivory drop-shadow-md select-none"
+              >
+                {cursorLabel}
+              </span>
+            )}
+          </div>
 
-      {/* Inner Pin-Point Dot */}
-      <div
-        ref={dotRef}
-        className={`fixed top-0 left-0 w-2 h-2 -ml-1 -mt-1 bg-ivory rounded-full pointer-events-none z-[100000] transition-opacity duration-150 ${
-          isVisible ? "opacity-100" : "opacity-0"
-        } ${cursorType === "text" ? "opacity-20" : ""}`}
-        style={{ willChange: "transform" }}
-      />
+          {/* Inner Pin-Point Dot */}
+          <div
+            ref={dotRef}
+            className={`fixed top-0 left-0 w-2 h-2 -ml-1 -mt-1 bg-ivory rounded-full pointer-events-none z-[100000] transition-opacity duration-150 ${
+              isVisible ? "opacity-100" : "opacity-0"
+            } ${cursorType === "text" ? "opacity-20" : ""}`}
+            style={{ willChange: "transform" }}
+          />
+        </>
+      )}
 
       {children}
     </CursorContext.Provider>

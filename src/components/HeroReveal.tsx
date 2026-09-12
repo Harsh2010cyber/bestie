@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { siteConfig } from "../config/siteConfig";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -24,15 +23,18 @@ export default function HeroReveal() {
   // Coordinates with lerp for smooth luxury lag
   const mousePos = useRef({ x: 0, y: 0 });
   const currentPos = useRef({ x: 0, y: 0 });
-  const velocity = useRef({ x: 0, y: 0, dist: 0 });
   const animFrameId = useRef<number | null>(null);
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const hasInteractedRef = useRef(false);
+  const maskRadiusRef = useRef({ r: 200 }); // Numeric proxy for GSAP expansion
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    if (typeof window === "undefined") return;
 
-    // Initial default spotlight at center
+    try {
+      gsap.registerPlugin(ScrollTrigger);
+    } catch (e) {}
+
     const width = window.innerWidth;
     const height = window.innerHeight;
     mousePos.current = { x: width * 0.5, y: height * 0.45 };
@@ -49,7 +51,7 @@ export default function HeroReveal() {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top,
       };
-      if (!hasInteracted) setHasInteracted(true);
+      if (!hasInteractedRef.current) hasInteractedRef.current = true;
     };
 
     // Touch movement handler for mobile
@@ -61,53 +63,43 @@ export default function HeroReveal() {
         x: touch.clientX - rect.left,
         y: touch.clientY - rect.top,
       };
-      if (!hasInteracted) setHasInteracted(true);
+      if (!hasInteractedRef.current) hasInteractedRef.current = true;
     };
 
     const container = containerRef.current;
     if (container) {
-      container.addEventListener("mousemove", handleMouseMove);
+      container.addEventListener("mousemove", handleMouseMove, { passive: true });
       container.addEventListener("touchmove", handleTouchMove, { passive: true });
       container.addEventListener("touchstart", handleTouchMove, { passive: true });
     }
 
-    // High performance animation loop for mask lerp & subtle distortion
-    let prevX = currentPos.current.x;
-    let prevY = currentPos.current.y;
+    // High performance animation loop for mask lerp
     let idleAngle = 0;
 
     const updateSpotlight = () => {
-      // If user hasn't touched/moved on mobile yet, create a gentle atmospheric drift
-      if (!hasInteracted) {
+      // Gentle atmospheric drift until user interacts
+      if (!hasInteractedRef.current) {
         idleAngle += 0.015;
-        const driftX = (width * 0.5) + Math.cos(idleAngle) * (width * 0.15);
-        const driftY = (height * 0.45) + Math.sin(idleAngle * 0.8) * (height * 0.1);
+        const driftX = width * 0.5 + Math.cos(idleAngle) * (width * 0.15);
+        const driftY = height * 0.45 + Math.sin(idleAngle * 0.8) * (height * 0.1);
         mousePos.current = { x: driftX, y: driftY };
       }
 
-      // Lerp for smooth lag (controlled, intentional, expensive feel)
+      // Smooth lag lerp
       const lerp = 0.085;
       currentPos.current.x += (mousePos.current.x - currentPos.current.x) * lerp;
       currentPos.current.y += (mousePos.current.y - currentPos.current.y) * lerp;
 
-      // Calculate speed for subtle stretch
-      const dx = currentPos.current.x - prevX;
-      const dy = currentPos.current.y - prevY;
-      const speed = Math.hypot(dx, dy);
-      prevX = currentPos.current.x;
-      prevY = currentPos.current.y;
-
-      const dynamicRadius = Math.min(260, Math.max(160, 180 + speed * 1.5));
-      const blurEdge = dynamicRadius * 0.35;
+      const r = maskRadiusRef.current.r;
 
       if (imageRevealRef.current) {
-        // Soft feathered circular mask
-        const mask = `radial-gradient(circle ${dynamicRadius}px at ${currentPos.current.x}px ${currentPos.current.y}px, black 0%, rgba(0,0,0,0.85) 65%, transparent 100%)`;
+        // Feathered circular mask
+        const mask = `radial-gradient(circle ${r}px at ${currentPos.current.x}px ${currentPos.current.y}px, black 0%, rgba(0,0,0,0.85) 65%, transparent 100%)`;
         imageRevealRef.current.style.maskImage = mask;
         imageRevealRef.current.style.webkitMaskImage = mask;
       }
 
-      // Parallax counter-shift on the image inside
+      // Parallax counter-shift
       if (imageInnerRef.current) {
         const moveX = (currentPos.current.x - width / 2) * -0.02;
         const moveY = (currentPos.current.y - height / 2) * -0.02;
@@ -121,7 +113,6 @@ export default function HeroReveal() {
 
     // Initial Entrance Reveal Sequence
     const ctx = gsap.context(() => {
-      // Set initial positions
       gsap.set(tagRef.current, { y: 25, opacity: 0 });
       gsap.set(headingRef.current, { y: 60, opacity: 0, filter: "blur(8px)" });
       gsap.set(subtitleRef.current, { y: 30, opacity: 0, filter: "blur(4px)" });
@@ -179,19 +170,15 @@ export default function HeroReveal() {
           },
           "-=0.4"
         )
-        .to(
-          hintRef.current,
-          {
-            opacity: 0,
-            duration: 1.5,
-            delay: 3,
-            ease: "power2.inOut",
-          }
-        );
+        .to(hintRef.current, {
+          opacity: 0,
+          duration: 1.5,
+          delay: 3,
+          ease: "power2.inOut",
+        });
 
       // Section Scroll Transition:
-      // Circular reveal expands into full-screen, scales camera into photo,
-      // and gently pushes typography upward with parallax.
+      // Animate the numeric mask radius proxy smoothly to full viewport expansion
       const scrollTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
@@ -205,10 +192,9 @@ export default function HeroReveal() {
 
       scrollTl
         .to(
-          imageRevealRef.current,
+          maskRadiusRef.current,
           {
-            maskImage: "radial-gradient(circle 1800px at 50% 50%, black 0%, black 100%, transparent 100%)",
-            webkitMaskImage: "radial-gradient(circle 1800px at 50% 50%, black 0%, black 100%, transparent 100%)",
+            r: 2000,
             ease: "power2.inOut",
           },
           0
@@ -251,7 +237,7 @@ export default function HeroReveal() {
         container.removeEventListener("touchstart", handleTouchMove);
       }
     };
-  }, [hasInteracted]);
+  }, []);
 
   return (
     <section
@@ -261,9 +247,8 @@ export default function HeroReveal() {
       onMouseEnter={() => setCursor("image", "DISCOVER")}
       onMouseLeave={() => resetCursor()}
     >
-      {/* Background Deep Atmospheric Ambient (Nearly completely dark) */}
+      {/* Background Deep Atmospheric Ambient */}
       <div className="absolute inset-0 bg-[#070709] z-0">
-        {/* Very faint silhouette texture */}
         <div
           className="absolute inset-0 opacity-[0.07] filter blur-xl scale-110"
           style={{
@@ -275,10 +260,10 @@ export default function HeroReveal() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#060608] via-transparent to-[#060608]/80" />
       </div>
 
-      {/* CURSOR REVEAL LAYER: Soft masked photograph following cursor */}
+      {/* CURSOR REVEAL LAYER */}
       <div
         ref={imageRevealRef}
-        className="absolute inset-0 z-10 pointer-events-none transition-[opacity] duration-700 will-change-[mask-image]"
+        className="absolute inset-0 z-10 pointer-events-none will-change-[mask-image]"
         style={{
           maskImage: "radial-gradient(circle 200px at 50% 50%, black 0%, rgba(0,0,0,0.85) 65%, transparent 100%)",
           WebkitMaskImage: "radial-gradient(circle 200px at 50% 50%, black 0%, rgba(0,0,0,0.85) 65%, transparent 100%)",
@@ -293,7 +278,6 @@ export default function HeroReveal() {
             className="w-full h-full object-cover object-center filter contrast-[1.04] brightness-[0.98] transition-transform duration-100 ease-out"
             loading="eager"
           />
-          {/* Subtle warm sunset amber tint overlay */}
           <div className="absolute inset-0 bg-gradient-to-tr from-wine-accent/20 via-transparent to-amber-sunset/15 mix-blend-overlay pointer-events-none" />
         </div>
       </div>
@@ -303,7 +287,6 @@ export default function HeroReveal() {
         ref={titleContainerRef}
         className="relative z-20 flex flex-col items-center justify-center text-center px-6 max-w-4xl pointer-events-none"
       >
-        {/* Tiny Label */}
         <div
           ref={tagRef}
           className="text-[10px] md:text-xs tracking-[0.4em] uppercase text-ivory/70 font-sans font-medium mb-5 md:mb-7 flex items-center gap-3"
@@ -313,7 +296,6 @@ export default function HeroReveal() {
           <span className="w-6 h-[1px] bg-bronze/60" />
         </div>
 
-        {/* Main Title: "FOR HER." */}
         <h1
           ref={headingRef}
           className="display-hero font-serif font-light text-ivory tracking-tight drop-shadow-2xl uppercase"
@@ -321,7 +303,6 @@ export default function HeroReveal() {
           {siteConfig.story.hero.mainTitle}
         </h1>
 
-        {/* Subtitle */}
         <p
           ref={subtitleRef}
           className="mt-6 md:mt-8 font-serif text-base md:text-xl lg:text-2xl text-ivory-muted font-light italic max-w-lg leading-relaxed"
@@ -329,7 +310,6 @@ export default function HeroReveal() {
           {siteConfig.story.hero.subtitle}
         </p>
 
-        {/* Hint near center/cursor */}
         <div
           ref={hintRef}
           className="mt-8 md:mt-12 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-ivory/10 bg-dark/60 backdrop-blur-md"
