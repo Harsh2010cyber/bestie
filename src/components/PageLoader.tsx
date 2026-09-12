@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { siteConfig } from "../config/siteConfig";
 
 interface PageLoaderProps {
   onComplete?: () => void;
@@ -84,7 +85,7 @@ export default function PageLoader({ onComplete }: PageLoaderProps) {
           ref={textRef}
           className="font-serif text-2xl md:text-3xl tracking-[0.25em] text-ivory font-light uppercase"
         >
-          FOR HER.
+          {siteConfig.story.hero.mainTitle}
         </h1>
 
         <div className="w-28 h-[1px] bg-gradient-to-r from-transparent via-bronze to-transparent my-4">

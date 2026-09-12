@@ -19,8 +19,8 @@ export interface PhotoWallItem {
 
 export const siteConfig = {
   bestie: {
-    name: "HER", // Change this to your bestie's real name if you like
-    nickname: "Bestie",
+    name: "RASMALI",
+    nickname: "Rasmali",
     specialDate: "2024 — FOREVER",
   },
   
@@ -50,9 +50,9 @@ export const siteConfig = {
   story: {
     hero: {
       tag: "A LITTLE PLACE ON THE INTERNET",
-      mainTitle: "FOR HER.",
+      mainTitle: "FOR RASMALI.",
       subtitle: "Some people enter your life. Somehow, they become a part of it.",
-      badgeLeft: "01 / HER",
+      badgeLeft: "01 / RASMALI",
       badgeRight: "SCROLL TO REMEMBER ↓",
       cursorHint: "move slowly…",
       cursorDiscover: "discover",
@@ -245,7 +245,7 @@ export const siteConfig = {
       punjabiStatement: "ਮੇਰੀ ਜ਼ਿੰਦਗੀ ਦੇ ਇਸ ਸੋਹਣੇ ਹਿੱਸੇ ਲਈ —\nਦਿਲੋਂ ਧੰਨਵਾਦ।",
       fadeLine1: "Some memories fade.",
       fadeLine2: "Some people don't.",
-      favoriteMemory: "YOU ARE ONE OF\nMY FAVORITE\nMEMORIES.",
+      favoriteMemory: "RASMALI,\nYOU ARE ONE OF\nMY FAVORITE\nMEMORIES.",
     },
 
     ending: {
@@ -256,7 +256,7 @@ export const siteConfig = {
   },
 
   navigation: [
-    { label: "HER", href: "#hero" },
+    { label: "RASMALI", href: "#hero" },
     { label: "BEGINNING", href: "#how-it-started" },
     { label: "MEMORIES", href: "#memory-scroll" },
     { label: "VIDEO", href: "#her-video" },
