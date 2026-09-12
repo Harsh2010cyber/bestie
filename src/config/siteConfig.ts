@@ -28,7 +28,7 @@ export const siteConfig = {
     // Primary hero photo of the two friends for the Section 01 reveal
     heroImage: "/media/Snapchat-1106457158.jpg",
     heroFallback: "/media/hero.jpg",
-    herVideo: "/media/her-video.mp4",
+    herVideo: "/media/lv_0_20260908154946.mp4",
     
     // Her personal photos from phone's Snapchat folder
     photo01: "/media/Snapchat-413746507.jpg",
